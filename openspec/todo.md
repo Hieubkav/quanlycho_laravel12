@@ -20,8 +20,8 @@ Dựa trên tham khảo dự án khuyennongcantho (Next.js với Convex backend)
 - **Settings**: Bảng cài đặt. Trường: key="global", brand_name, logo_url, favicon_url, active, order, created_at, updated_at. Chỉ một hàng. Index: by_key, by_active, by_order.
 
 ### 2. **Viết các resource/page trong Filament admin panel**
-- Tạo resource cho User: Chỉ role admin có thể view/edit profile, không tạo thêm user.
-- Tạo resource cho Sale: CRUD đầy đủ (create, list, edit, delete), với form chọn Market (many-to-many). User cấp TK Sale.
+- Tạo resource cho User: Chỉ role admin có thể view/edit profile, không tạo thêm user. Thêm tính năng reset password cho admin khi quên (qua email).
+- Tạo resource cho Sale: CRUD đầy đủ (create, list, edit, delete), với form chọn Market (many-to-many). User cấp TK Sale. Thêm nút sinh mật khẩu mới để cấp cho sale nếu quên (admin gửi lại tài khoản).
 - Tạo resource cho Market: CRUD, với form địa chỉ chi tiết.
 - Tạo resource cho Unit: CRUD đơn giản.
 - Tạo resource cho Products: CRUD, với filter is_default, chỉ role admin edit/delete Products chung.
@@ -31,7 +31,7 @@ Dựa trên tham khảo dự án khuyennongcantho (Next.js với Convex backend)
 
 ### 3. **Viết trang login cho Sale để vào web lấy giá sản phẩm ở chợ**
 - Tạo trang login riêng cho Sale tại `/khaosat` (không dùng Filament), sử dụng Volt + Flux UI.
-- Form login với email/phone và password.
+- Form login với email/phone và password. Sale không có chức năng reset password tự động; nếu quên, phải nhờ admin gửi lại tài khoản (hoặc sinh mật khẩu mới).
 - Sau login, redirect đến trang chủ `/khaosat` (dashboard đơn giản: chỉ nói đâu là trang nào với hướng dẫn đơn giản).
 - Từ dashboard, Sale chọn ngày lấy giá, tạo đơn khảo sát (hiển thị tên Sale và thông tin chợ đã chọn), hiện list 40-50 sản phẩm để điền giá (responsiv, dễ dùng ở chợ).
 - TK Sale do User cấp (ai cũng được, nhưng chỉ Admin đụng resource User và Settings).
@@ -53,6 +53,7 @@ Dựa trên tham khảo dự án khuyennongcantho (Next.js với Convex backend)
 - Sử dụng Filament v4 cho admin panel.
 - Volt cho các trang cần interactivity.
 - Flux UI cho components.
+- Thiết lập Resend cho email: Đưa API key vào file .env và cấu hình gửi email cho ứng dụng.
 - Pint để format code.
 - Luôn test sau mỗi thay đổi với Pest.
 - Đảm bảo list Products chung (is_default=true) không bị Sale edit/delete, chỉ Admin.
