@@ -28,6 +28,7 @@ class Profile extends Component
      */
     public function updateProfileInformation(): void
     {
+        /** @var User&\Illuminate\Contracts\Auth\MustVerifyEmail $user */
         $user = Auth::user();
 
         $validated = $this->validate([
@@ -59,6 +60,7 @@ class Profile extends Component
      */
     public function resendVerificationNotification(): void
     {
+        /** @var User&\Illuminate\Contracts\Auth\MustVerifyEmail $user */
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
