@@ -1,0 +1,1 @@
+hãy tham khảo E:\NextJS\persional_project\khuyennong\khuyennongcantho hãy đề xuất những chức năng cần làm nào làm trước nào làm sao vào để vào file mới @khaosatcho\openspec\todo.md nha => hãy cho biết cần làm gì trước làm gì sau nha
