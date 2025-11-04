@@ -13,11 +13,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            UnitSeeder::class,
+            ProductSeeder::class,
+        ]);
 
+        // Create default setting
+        \App\Models\Setting::create([
+            'key' => 'global',
+            'brand_name' => 'Quan Ly Cho',
+            'active' => true,
+            'order' => 1,
+        ]);
+
+        // Create admin user
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+            'phone' => '0123456789',
+            'active' => true,
+            'order' => 1,
         ]);
     }
 }
