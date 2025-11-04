@@ -7,5 +7,47 @@
     OpenSpec change proposal for this feature"
 
 3. Learn the OpenSpec workflow:
-   "Please explain the OpenSpec workflow from openspec/AGENTS.md
-    and how I should work with you on this project"
+"Please explain the OpenSpec workflow from openspec/AGENTS.md
+and how I should work with you on this project"
+
+## Boilerplate Prompts theo Flow OpenSpec (để tạo proposal cho chức năng X)
+
+Khi bạn muốn làm chức năng X (thay thế [CHỨC NĂNG X] bằng tên cụ thể), gửi prompts theo thứ tự sau để làm việc với tôi theo chuẩn OpenSpec. Mỗi bước bao gồm lệnh openspec cần thiết.
+
+### Bước 1: Khám phá trạng thái hiện tại (Explore Current State)
+Prompt: "Tôi muốn làm [CHỨC NĂNG X]. Trước tiên, hãy giúp tôi khám phá trạng thái OpenSpec hiện tại để hiểu ngữ cảnh dự án."
+- Lệnh cần chạy: `openspec list` (liệt kê thay đổi đang hoạt động)
+- Lệnh cần chạy: `openspec list --specs` (liệt kê các đặc tả hiện có)
+- Lệnh tùy chọn: `openspec show [spec-id] --type spec` (xem chi tiết spec cụ thể nếu biết)
+- Lệnh tùy chọn: `rg -n "Requirement:|Scenario:" openspec/specs` (tìm kiếm full-text trong specs)
+
+### Bước 2: Quyết định phạm vi (Decide Scope)
+Prompt: "Dựa trên trạng thái hiện tại, hãy giúp tôi quyết định phạm vi cho [CHỨC NĂNG X]: là thêm capability mới hay sửa capability hiện có? Có cần proposal không?"
+- Không có lệnh openspec cụ thể, nhưng có thể dùng `openspec spec list --long` để kiểm tra capability tồn tại.
+
+### Bước 3: Tạo proposal (Scaffold Proposal)
+Prompt: "Hãy tạo OpenSpec change proposal cho [CHỨC NĂNG X] với change-id [CHANGE-ID], bao gồm proposal.md, tasks.md, và spec deltas."
+- Lệnh sau khi tạo: `openspec validate [change-id] --strict` (kiểm tra proposal)
+
+### Bước 4: Viết chi tiết deltas (Draft Spec Deltas)
+Prompt: "Hãy viết chi tiết các spec deltas cho [CHỨC NĂNG X] trong changes/[change-id]/specs/, sử dụng ADDED/MODIFIED/REMOVED Requirements với scenarios."
+- Lệnh: `openspec validate [change-id] --strict` (kiểm tra deltas)
+
+### Bước 5: Yêu cầu phê duyệt (Request Approval)
+Prompt: "Proposal cho [CHỨC NĂNG X] đã sẵn sàng. Hãy giúp tôi trình bày để yêu cầu phê duyệt từ team."
+- Không có lệnh openspec, nhưng có thể dùng `openspec show [change-id]` để hiển thị chi tiết.
+
+### Bước 6: Triển khai (Implement Changes)
+Prompt: "Proposal đã được phê duyệt. Hãy bắt đầu triển khai [CHỨC NĂNG X] theo tasks.md, cập nhật tiến độ."
+- Lệnh sau khi hoàn thành: `openspec validate --strict` (kiểm tra tổng thể)
+
+### Bước 7: Lưu trữ (Archive Changes)
+Prompt: "Triển khai xong [CHỨC NĂNG X]. Hãy lưu trữ change và cập nhật specs nếu cần."
+- Lệnh: `openspec archive [change-id] --skip-specs --yes` (cho thay đổi chỉ công cụ) hoặc `openspec archive [change-id] --yes`
+- Lệnh: `openspec validate --strict` (xác nhận sau lưu trữ)
+
+### Lưu ý chung:
+- Thay [CHỨC NĂNG X] bằng tên cụ thể như "thêm chức năng đăng nhập 2FA".
+- Change-ID nên là kebab-case, verb-led, ví dụ: "add-two-factor-auth".
+- Nếu là thay đổi nhỏ (bug fix, typo), bỏ qua proposal và trực tiếp: "Hãy sửa lỗi này trong code".
+- Luôn chạy `openspec validate --strict` trước khi trình bày proposal.
