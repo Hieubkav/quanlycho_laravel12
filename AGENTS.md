@@ -43,6 +43,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
+- resend/resend-laravel (RESEND) - v0.23.0
 - livewire/flux (FLUXUI_FREE) - v2
 - livewire/livewire (LIVEWIRE) - v3
 - livewire/volt (VOLT) - v1
@@ -67,6 +68,11 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 ## Frontend Bundling
 - If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+
+### Package Rules Management
+- When adding new dependencies/packages, always add corresponding rules section following the naming pattern: [package]/[version] rules
+- Include configuration, best practices, and testing guidelines for each package
+- Maintain alphabetical order and consistent formatting
 
 ## Replies
 - Be concise in your explanations - focus on what's important rather than explaining obvious details.
@@ -246,6 +252,30 @@ Forms\Components\Select::make('user_id')
 - Table columns: `Tables/Columns/`
 - Table filters: `Tables/Filters/`
 - Actions: `Actions/`
+
+
+=== resend/core rules ===
+
+## Resend
+
+- Resend is an email service for Laravel applications that provides a simple API for sending emails.
+- Use the `search-docs` tool to get Resend Laravel documentation when needed.
+- Configure API key in `.env` as `RESEND_API_KEY`.
+- Mail driver should be set to `resend` in `config/mail.php`.
+- Use queue jobs for email sending to improve performance.
+- Handle email failures gracefully with try-catch blocks.
+
+### Email Best Practices
+- Always include proper subject lines and sender information
+- Use HTML templates with inline CSS for better compatibility
+- Include unsubscribe links when appropriate
+- Monitor email deliverability metrics
+- Use proper error handling for failed sends
+
+### Testing Emails
+- Use Mail::fake() in tests to prevent actual email sending
+- Assert email content and recipients in feature tests
+- Test email templates rendering correctly
 
 
 === laravel/core rules ===

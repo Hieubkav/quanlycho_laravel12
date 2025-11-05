@@ -1,39 +1,6 @@
-# admin Specification
+# Admin Specification - Add Email Capability Delta
 
-## Purpose
-TBD - created by archiving change filament-admin-init. Update Purpose after archive.
-## Requirements
-### Requirement: Admin Panel Access
-The system SHALL provide an admin panel at /admin to manage content and users.
-
-#### Scenario: Admin Login Success
-- **WHEN** admin accesses /admin
-- **THEN** login page is displayed
-- **WHEN** valid credentials are entered
-- **THEN** admin dashboard is accessible
-
-### Requirement: Admin Authentication
-The system SHALL require authentication to access admin panel.
-
-#### Scenario: Unauthorized Access Denied
-- **WHEN** unauthenticated user accesses /admin
-- **THEN** redirected to login page
-
-#### Scenario: Session Management
-- **WHEN** admin logs out from /admin/logout
-- **THEN** session is terminated and redirected to login
-
-### Requirement: Admin User Creation
-The system SHALL support creating admin users with email verification.
-
-#### Scenario: Create Admin User
-- **WHEN** user is created with admin role
-- **THEN** user can access admin panel
-
-#### Scenario: Admin Creation with Email Notification
-- **WHEN** admin user is created
-- **THEN** welcome email is sent with login instructions
-- **AND** email includes temporary password if not set
+## ADDED Requirements
 
 ### Requirement: Email Service Integration
 The system SHALL integrate with Resend email service for sending notifications.
@@ -97,3 +64,20 @@ The system SHALL provide customizable email templates.
 - **THEN** includes brand name and logo from global settings
 - **AND** matches application branding
 
+## MODIFIED Requirements
+
+### Requirement: Admin User Creation (Modified)
+The system SHALL support creating admin users with email verification.
+
+#### Scenario: Admin Creation with Email Notification
+- **WHEN** admin user is created
+- **THEN** welcome email is sent with login instructions
+- **AND** email includes temporary password if not set
+
+### Requirement: Sale User Creation (Modified)
+The system SHALL support creating sale users with credential delivery.
+
+#### Scenario: Sale Creation with Email Credentials
+- **WHEN** sale user is created
+- **THEN** credential email is automatically sent
+- **AND** email includes market assignments and contact information
