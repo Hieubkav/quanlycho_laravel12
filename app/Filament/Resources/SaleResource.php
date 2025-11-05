@@ -28,7 +28,7 @@ class SaleResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationLabel = 'Bán hàng';
+    protected static ?string $navigationLabel = 'Nhân viên bán hàng';
 
     protected static ?string $modelLabel = 'Nhân viên bán hàng';
 

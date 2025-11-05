@@ -15,6 +15,13 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Sale routes
+Route::prefix('khaosat')->group(function () {
+    Route::get('/', function () {
+        return view('khaosat');
+    })->middleware('auth:sale')->name('khaosat');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
