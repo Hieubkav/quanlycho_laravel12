@@ -16,6 +16,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UnitSeeder::class,
             ProductSeeder::class,
+            MarketSeeder::class,
+            SaleSeeder::class,
+            SurveySeeder::class,
+            SurveyItemSeeder::class,
+            ReportSeeder::class,
+            ReportItemSeeder::class,
         ]);
 
         // Create default setting
