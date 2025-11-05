@@ -39,88 +39,101 @@ class SaleResource extends Resource
         return $schema
             ->schema([
                 TextInput::make('name')
+                    ->label('Họ tên')
                     ->required()
                     ->maxLength(255),
 
                 TextInput::make('email')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
                 TextInput::make('phone')
+                    ->label('Số điện thoại')
                     ->tel()
                     ->required()
                     ->maxLength(255),
 
                 Textarea::make('address')
+                    ->label('Địa chỉ')
                     ->required()
                     ->columnSpanFull(),
 
                 Select::make('markets')
+                    ->label('Chợ')
                     ->relationship('markets', 'name')
                     ->multiple()
                     ->preload()
                     ->required(),
 
                 Toggle::make('active')
-                    ->label('Active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
                 TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
 
                 Textarea::make('notes')
+                    ->label('Ghi chú')
                     ->columnSpanFull(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('name')
+    ->label('Họ tên')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+    Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+        ->searchable(),
 
-                Tables\Columns\TextColumn::make('phone'),
+    Tables\Columns\TextColumn::make('phone')
+    ->label('Số điện thoại'),
 
-                Tables\Columns\TextColumn::make('markets.name')
-                    ->label('Markets')
-                    ->listWithLineBreaks()
-                    ->badge(),
+    Tables\Columns\TextColumn::make('markets.name')
+                    ->label('Chợ')
+        ->listWithLineBreaks()
+    ->badge(),
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+    Tables\Columns\IconColumn::make('active')
+    ->label('Kích hoạt')
+    ->boolean(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+        ->label('Ngày tạo')
+    ->dateTime()
+    ->sortable()
+    ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
+        Tables\Columns\TextColumn::make('updated_at')
+        ->label('Ngày cập nhật')
+    ->dateTime()
+            ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active Status'),
+                    ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
                 Action::make('generate_password')
-                    ->label('Generate Password')
+                    ->label('Tạo mật khẩu')
                     ->icon('heroicon-o-key')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalHeading('Generate New Password')
-                    ->modalDescription('This will generate a new random password and send login credentials to the sale via email.')
-                    ->modalSubmitActionLabel('Generate Password')
+                    ->modalHeading('Tạo mật khẩu mới')
+                    ->modalDescription('Hệ thống sẽ tạo mật khẩu ngẫu nhiên mới và gửi thông tin đăng nhập về email của nhân viên bán hàng.')
+                    ->modalSubmitActionLabel('Tạo mật khẩu')
                     ->action(function (Sale $record) {
                         $newPassword = \Illuminate\Support\Str::random(12);
                         $record->update(['password' => Hash::make($newPassword)]);

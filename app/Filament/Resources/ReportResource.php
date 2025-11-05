@@ -35,19 +35,23 @@ class ReportResource extends Resource
         return $schema
             ->schema([
                 DatePicker::make('from_day')
+                    ->label('Từ ngày')
                     ->required(),
 
                 DatePicker::make('to_day')
+                    ->label('Đến ngày')
                     ->required(),
 
                 Textarea::make('summary_rows')
+                    ->label('Tóm tắt báo cáo')
                     ->columnSpanFull(),
 
                 Toggle::make('active')
-                    ->label('Active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
                 TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
             ]);
@@ -55,38 +59,46 @@ class ReportResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('from_day')
-                    ->date()
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('from_day')
+    ->label('Từ ngày')
+    ->date()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('to_day')
+    Tables\Columns\TextColumn::make('to_day')
+    ->label('Đến ngày')
                     ->date()
-                    ->sortable(),
+        ->sortable(),
 
                 Tables\Columns\TextColumn::make('createdByAdmin.name')
-                    ->label('Created By'),
+        ->label('Người tạo'),
 
-                Tables\Columns\TextColumn::make('generated_at')
-                    ->dateTime()
-                    ->sortable(),
+    Tables\Columns\TextColumn::make('generated_at')
+                    ->label('Thời gian tạo')
+        ->dateTime()
+    ->sortable(),
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+    Tables\Columns\IconColumn::make('active')
+    ->label('Kích hoạt')
+    ->boolean(),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active Status'),
-                Tables\Filters\Filter::make('date_range')
-                    ->form([
-                        DatePicker::make('from_day'),
-                        DatePicker::make('to_day'),
+        Tables\Columns\TextColumn::make('created_at')
+            ->label('Ngày tạo')
+        ->dateTime()
+    ->sortable()
+        ->toggleable(isToggledHiddenByDefault: true),
+    ])
+    ->filters([
+    Tables\Filters\TernaryFilter::make('active')
+    ->label('Trạng thái kích hoạt'),
+    Tables\Filters\Filter::make('date_range')
+    ->label('Khoảng thời gian')
+    ->form([
+    DatePicker::make('from_day')
+            ->label('Từ ngày'),
+                DatePicker::make('to_day')
+                            ->label('Đến ngày'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query

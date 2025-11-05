@@ -33,20 +33,24 @@ class SettingResource extends Resource
         return $schema
             ->schema([
                 TextInput::make('brand_name')
+                    ->label('Tên thương hiệu')
                     ->required()
                     ->maxLength(255),
 
                 TextInput::make('logo_url')
+                    ->label('URL Logo')
                     ->url(),
 
                 TextInput::make('favicon_url')
+                    ->label('URL Favicon')
                     ->url(),
 
                 Toggle::make('active')
-                    ->label('Active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
                 TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
             ]);
@@ -54,17 +58,21 @@ class SettingResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('brand_name')
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('brand_name')
+    ->label('Tên thương hiệu')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('logo_url'),
+                Tables\Columns\TextColumn::make('logo_url')
+        ->label('URL Logo'),
 
                 Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+        ->label('Kích hoạt')
+    ->boolean(),
 
-                Tables\Columns\TextColumn::make('updated_at')
+        Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable(),
             ])

@@ -14,6 +14,10 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
@@ -35,81 +39,94 @@ class UserResource extends Resource
     {
         return $schema
             ->schema([
-                Schemas\Components\TextInput::make('name')
+                TextInput::make('name')
+                    ->label('Họ tên')
                     ->required()
                     ->maxLength(255),
 
-                Schemas\Components\TextInput::make('email')
+                TextInput::make('email')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
 
-                Schemas\Components\TextInput::make('phone')
+                TextInput::make('phone')
+                    ->label('Số điện thoại')
                     ->tel()
                     ->maxLength(255),
 
-                Schemas\Components\Select::make('role')
+                Select::make('role')
+                    ->label('Vai trò')
                     ->options([
-                        'admin' => 'Admin',
+                        'admin' => 'Quản trị viên',
                     ])
                     ->required()
                     ->default('admin'),
 
-                Schemas\Components\Toggle::make('active')
-                    ->label('Active')
+                Toggle::make('active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
-                Schemas\Components\TextInput::make('order')
+                TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
 
-                Schemas\Components\Textarea::make('notes')
+                Textarea::make('notes')
+                    ->label('Ghi chú')
                     ->columnSpanFull(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('name')
+    ->label('Họ tên')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+    Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+        ->searchable(),
 
-                Tables\Columns\TextColumn::make('phone'),
+    Tables\Columns\TextColumn::make('phone')
+                    ->label('Số điện thoại'),
 
-                Tables\Columns\TextColumn::make('role'),
+    Tables\Columns\TextColumn::make('role')
+                    ->label('Vai trò'),
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+    Tables\Columns\IconColumn::make('active')
+    ->label('Kích hoạt')
+    ->boolean(),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+    Tables\Columns\TextColumn::make('created_at')
+    ->label('Ngày tạo')
+    ->dateTime()
+    ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+    Tables\Columns\TextColumn::make('updated_at')
+    ->label('Ngày cập nhật')
+            ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active Status'),
+                    ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
                 Action::make('reset_password')
-                    ->label('Reset Password')
+                    ->label('Đặt lại mật khẩu')
                     ->icon('heroicon-o-key')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalHeading('Reset Password')
-                    ->modalDescription('This will generate a new random password and send it to the admin via email.')
-                    ->modalSubmitActionLabel('Reset Password')
+                    ->modalHeading('Đặt lại mật khẩu')
+                    ->modalDescription('Hệ thống sẽ tạo mật khẩu ngẫu nhiên mới và gửi về email của quản trị viên.')
+                    ->modalSubmitActionLabel('Đặt lại mật khẩu')
                     ->action(function (User $record) {
                         $newPassword = \Illuminate\Support\Str::random(12);
                         $record->update(['password' => Hash::make($newPassword)]);

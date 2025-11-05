@@ -35,24 +35,29 @@ class SurveyResource extends Resource
         return $schema
             ->schema([
                 Select::make('market_id')
+                    ->label('Chợ')
                     ->relationship('market', 'name')
                     ->required(),
 
                 Select::make('sale_id')
+                    ->label('Nhân viên bán hàng')
                     ->relationship('sale', 'name')
                     ->required(),
 
                 DatePicker::make('survey_day')
+                    ->label('Ngày khảo sát')
                     ->required(),
 
                 Textarea::make('notes')
+                    ->label('Ghi chú')
                     ->columnSpanFull(),
 
                 Toggle::make('active')
-                    ->label('Active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
                 TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
             ]);
@@ -60,39 +65,45 @@ class SurveyResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('market.name')
-                    ->label('Market')
-                    ->searchable(),
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('market.name')
+    ->label('Chợ')
+    ->searchable(),
 
-                Tables\Columns\TextColumn::make('sale.name')
-                    ->label('Sale')
-                    ->searchable(),
+    Tables\Columns\TextColumn::make('sale.name')
+    ->label('Nhân viên bán hàng')
+    ->searchable(),
 
-                Tables\Columns\TextColumn::make('survey_day')
-                    ->date()
+    Tables\Columns\TextColumn::make('survey_day')
+    ->label('Ngày khảo sát')
+    ->date()
                     ->sortable(),
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+    Tables\Columns\IconColumn::make('active')
+                    ->label('Kích hoạt')
+        ->boolean(),
 
-                Tables\Columns\TextColumn::make('created_at')
+    Tables\Columns\TextColumn::make('created_at')
+    ->label('Ngày tạo')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+        ->sortable()
+    ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active Status'),
-                Tables\Filters\SelectFilter::make('market')
+    Tables\Columns\TextColumn::make('updated_at')
+            ->label('Ngày cập nhật')
+            ->dateTime()
+        ->sortable()
+    ->toggleable(isToggledHiddenByDefault: true),
+    ])
+    ->filters([
+    Tables\Filters\TernaryFilter::make('active')
+    ->label('Trạng thái kích hoạt'),
+        Tables\Filters\SelectFilter::make('market')
+                    ->label('Chợ')
                     ->relationship('market', 'name'),
                 Tables\Filters\SelectFilter::make('sale')
+                    ->label('Nhân viên bán hàng')
                     ->relationship('sale', 'name'),
             ])
             ->actions([

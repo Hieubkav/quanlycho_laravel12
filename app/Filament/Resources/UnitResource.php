@@ -11,6 +11,8 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -31,15 +33,17 @@ class UnitResource extends Resource
     {
         return $schema
             ->schema([
-                Schemas\Components\TextInput::make('name')
+                TextInput::make('name')
+                    ->label('Tên đơn vị')
                     ->required()
                     ->maxLength(255),
 
-                Schemas\Components\Toggle::make('active')
-                    ->label('Active')
+                Toggle::make('active')
+                    ->label('Kích hoạt')
                     ->default(true),
 
-                Schemas\Components\TextInput::make('order')
+                TextInput::make('order')
+                    ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
             ]);
@@ -47,27 +51,31 @@ class UnitResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
+    return $table
+    ->columns([
+    Tables\Columns\TextColumn::make('name')
+    ->label('Tên đơn vị')
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
+    Tables\Columns\IconColumn::make('active')
+                    ->label('Kích hoạt')
+        ->boolean(),
 
-                Tables\Columns\TextColumn::make('created_at')
+    Tables\Columns\TextColumn::make('created_at')
+    ->label('Ngày tạo')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+        ->sortable()
+    ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+    Tables\Columns\TextColumn::make('updated_at')
+            ->label('Ngày cập nhật')
+            ->dateTime()
+        ->sortable()
+    ->toggleable(isToggledHiddenByDefault: true),
+    ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('active')
-                    ->label('Active Status'),
+                    ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
                 ViewAction::make(),
