@@ -26,7 +26,7 @@ class Market extends Model
 
     public function sales()
     {
-        return $this->belongsToMany(Sale::class);
+        return $this->belongsToMany(Sale::class, 'sale_market');
     }
 
     public function surveys()

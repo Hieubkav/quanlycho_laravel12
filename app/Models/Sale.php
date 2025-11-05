@@ -30,7 +30,7 @@ class Sale extends Authenticatable
 
     public function markets()
     {
-        return $this->belongsToMany(Market::class);
+        return $this->belongsToMany(Market::class, 'sale_market');
     }
 
     public function surveys()

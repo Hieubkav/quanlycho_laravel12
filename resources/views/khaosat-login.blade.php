@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Khảo sát giá sản phẩm</title>
+    <title>Đăng nhập khảo sát</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased">
-    <livewire:khaosat.dashboard />
+    <livewire:khaosat.login />
 </body>
 </html>
