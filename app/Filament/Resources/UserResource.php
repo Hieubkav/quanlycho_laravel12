@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Mail\AdminPasswordReset;
 use App\Models\User;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -22,11 +23,13 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationLabel = 'Admins';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $modelLabel = 'Admin';
+    protected static ?string $navigationLabel = 'Quản trị viên';
 
-    protected static ?string $pluralModelLabel = 'Admins';
+    protected static ?string $modelLabel = 'Quản trị viên';
+
+    protected static ?string $pluralModelLabel = 'Quản trị viên';
 
     public static function form(Schema $schema): Schema
     {

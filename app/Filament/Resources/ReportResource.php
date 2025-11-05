@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,11 +22,13 @@ class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static ?string $navigationLabel = 'Reports';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-chart-bar';
 
-    protected static ?string $modelLabel = 'Report';
+    protected static ?string $navigationLabel = 'Báo cáo';
 
-    protected static ?string $pluralModelLabel = 'Reports';
+    protected static ?string $modelLabel = 'Báo cáo';
+
+    protected static ?string $pluralModelLabel = 'Báo cáo';
 
     public static function form(Schema $schema): Schema
     {

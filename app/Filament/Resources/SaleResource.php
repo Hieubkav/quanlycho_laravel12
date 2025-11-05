@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use BackedEnum;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -25,11 +26,13 @@ class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
 
-    protected static ?string $navigationLabel = 'Sales';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $modelLabel = 'Sale';
+    protected static ?string $navigationLabel = 'Bán hàng';
 
-    protected static ?string $pluralModelLabel = 'Sales';
+    protected static ?string $modelLabel = 'Nhân viên bán hàng';
+
+    protected static ?string $pluralModelLabel = 'Nhân viên bán hàng';
 
     public static function form(Schema $schema): Schema
     {

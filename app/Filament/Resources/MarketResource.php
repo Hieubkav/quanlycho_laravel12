@@ -13,16 +13,20 @@ use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use BackedEnum;
+use UnitEnum;
 
 class MarketResource extends Resource
 {
     protected static ?string $model = Market::class;
 
-    protected static ?string $navigationLabel = 'Markets';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $modelLabel = 'Market';
+    protected static ?string $navigationLabel = 'Thị trường';
 
-    protected static ?string $pluralModelLabel = 'Markets';
+    protected static ?string $modelLabel = 'Thị trường';
+
+    protected static ?string $pluralModelLabel = 'Thị trường';
 
     public static function form(Schema $schema): Schema
     {

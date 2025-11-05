@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,11 +22,13 @@ class SurveyResource extends Resource
 {
     protected static ?string $model = Survey::class;
 
-    protected static ?string $navigationLabel = 'Surveys';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $modelLabel = 'Survey';
+    protected static ?string $navigationLabel = 'Khảo sát';
 
-    protected static ?string $pluralModelLabel = 'Surveys';
+    protected static ?string $modelLabel = 'Khảo sát';
+
+    protected static ?string $pluralModelLabel = 'Khảo sát';
 
     public static function form(Schema $schema): Schema
     {

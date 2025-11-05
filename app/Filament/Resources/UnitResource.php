@@ -11,6 +11,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -18,11 +19,13 @@ class UnitResource extends Resource
 {
     protected static ?string $model = Unit::class;
 
-    protected static ?string $navigationLabel = 'Units';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-scale';
 
-    protected static ?string $modelLabel = 'Unit';
+    protected static ?string $navigationLabel = 'Đơn vị';
 
-    protected static ?string $pluralModelLabel = 'Units';
+    protected static ?string $modelLabel = 'Đơn vị';
+
+    protected static ?string $pluralModelLabel = 'Đơn vị';
 
     public static function form(Schema $schema): Schema
     {

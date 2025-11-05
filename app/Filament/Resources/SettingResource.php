@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,11 +20,13 @@ class SettingResource extends Resource
 {
     protected static ?string $model = Setting::class;
 
-    protected static ?string $navigationLabel = 'Settings';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $modelLabel = 'Setting';
+    protected static ?string $navigationLabel = 'Cài đặt';
 
-    protected static ?string $pluralModelLabel = 'Settings';
+    protected static ?string $modelLabel = 'Cài đặt';
+
+    protected static ?string $pluralModelLabel = 'Cài đặt';
 
     public static function form(Schema $schema): Schema
     {

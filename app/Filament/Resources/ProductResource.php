@@ -12,19 +12,23 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationLabel = 'Products';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cube';
 
-    protected static ?string $modelLabel = 'Product';
+    protected static ?string $navigationLabel = 'Sản phẩm';
 
-    protected static ?string $pluralModelLabel = 'Products';
+    protected static ?string $modelLabel = 'Sản phẩm';
+
+    protected static ?string $pluralModelLabel = 'Sản phẩm';
 
     public static function form(Schema $schema): Schema
     {
