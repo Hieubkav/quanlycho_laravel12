@@ -5,11 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Mail\SaleCredentials;
 use App\Models\Sale;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -18,7 +18,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -85,38 +84,38 @@ class SaleResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('name')
-    ->label('Họ tên')
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Họ tên')
                     ->searchable(),
 
-    Tables\Columns\TextColumn::make('email')
+                Tables\Columns\TextColumn::make('email')
                     ->label('Email')
-        ->searchable(),
+                    ->searchable(),
 
-    Tables\Columns\TextColumn::make('phone')
-    ->label('Số điện thoại'),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Số điện thoại'),
 
-    Tables\Columns\TextColumn::make('markets.name')
+                Tables\Columns\TextColumn::make('markets.name')
                     ->label('Chợ')
-        ->listWithLineBreaks()
-    ->badge(),
+                    ->listWithLineBreaks()
+                    ->badge(),
 
-    Tables\Columns\IconColumn::make('active')
-    ->label('Kích hoạt')
-    ->boolean(),
+                Tables\Columns\IconColumn::make('active')
+                    ->label('Kích hoạt')
+                    ->boolean(),
 
                 Tables\Columns\TextColumn::make('created_at')
-        ->label('Ngày tạo')
-    ->dateTime()
-    ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Ngày tạo')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-        Tables\Columns\TextColumn::make('updated_at')
-        ->label('Ngày cập nhật')
-    ->dateTime()
-            ->sortable()
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
+                    ->dateTime()
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -124,7 +123,6 @@ class SaleResource extends Resource
                     ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
-                ViewAction::make(),
                 EditAction::make(),
                 Action::make('generate_password')
                     ->label('Tạo mật khẩu')

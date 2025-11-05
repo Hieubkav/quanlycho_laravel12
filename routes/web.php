@@ -6,6 +6,12 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/test-settings', function () {
+    $setting = \App\Models\Setting::where('key', 'global')->first();
+
+    return response()->json($setting);
+})->name('test.settings');
+
 // Sale routes
 Route::prefix('khaosat')->group(function () {
     Route::get('/login', function () {

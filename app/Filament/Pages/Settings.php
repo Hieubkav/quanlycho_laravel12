@@ -10,6 +10,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions as ActionsComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form as FormComponent;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +21,15 @@ class Settings extends Page
 {
     use InteractsWithForms;
 
-    public function getView(): string
-    {
-        return 'filament.pages.settings';
-    }
+    public ?array $data = [];
+
+    private const FORM_FIELDS = [
+        'brand_name',
+        'logo_url',
+        'favicon_url',
+        'active',
+        'order',
+    ];
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
 
@@ -35,10 +43,20 @@ class Settings extends Page
     {
         $setting = Setting::where('key', 'global')->first();
 
-        $this->form->fill($setting ? $setting->toArray() : []);
+        $this->data = $setting
+            ? $setting->only(self::FORM_FIELDS)
+            : [
+                'brand_name' => '',
+                'logo_url' => '',
+                'favicon_url' => '',
+                'active' => true,
+                'order' => 0,
+            ];
     }
 
-    public function form(Schema $schema): Schema
+
+
+    public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -46,46 +64,62 @@ class Settings extends Page
                     ->schema([
                         TextInput::make('brand_name')
                             ->label('Tên thương hiệu')
-                            ->required()
-                            ->maxLength(255),
+                            ->default('')
+                            ->maxLength(255)
+                            ->live()
+                            ->statePath('data.brand_name'),
 
                         TextInput::make('logo_url')
                             ->label('URL Logo')
-                            ->url(),
+                            ->default('')
+                            ->url()
+                            ->live()
+                            ->statePath('data.logo_url'),
 
                         TextInput::make('favicon_url')
                             ->label('URL Favicon')
-                            ->url(),
+                            ->default('')
+                            ->url()
+                            ->live()
+                            ->statePath('data.favicon_url'),
 
                         Toggle::make('active')
                             ->label('Kích hoạt')
-                            ->default(true),
+                            ->default(true)
+                            ->live()
+                            ->statePath('data.active'),
 
                         TextInput::make('order')
                             ->label('Thứ tự')
                             ->numeric()
-                            ->default(0),
+                            ->default(0)
+                            ->live()
+                            ->statePath('data.order'),
                     ]),
+                ActionsComponent::make($this->getFormActions())
+                    ->alignment($this->getFormActionsAlignment())
+                    ->sticky($this->areFormActionsSticky())
+                    ->key('form-actions'),
             ]);
     }
+
+
 
     protected function getFormActions(): array
     {
         return [
             Action::make('save')
-                ->label('Lưu thay đổi')
+                ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->action('save')
-                ->color('primary'),
+                ->keyBindings(['mod+s']),
         ];
     }
 
     public function save(): void
     {
-        $data = $this->form->getState();
-
         Setting::updateOrCreate(
             ['key' => 'global'],
-            $data
+            $this->data
         );
 
         Notification::make()

@@ -4,20 +4,17 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MarketResource\Pages;
 use App\Models\Market;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Resource;
-use Filament\Schemas;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use BackedEnum;
-use UnitEnum;
 
 class MarketResource extends Resource
 {
@@ -25,11 +22,11 @@ class MarketResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationLabel = 'Thị trường';
+    protected static ?string $navigationLabel = 'Chợ';
 
-    protected static ?string $modelLabel = 'Thị trường';
+    protected static ?string $modelLabel = 'Chợ';
 
-    protected static ?string $pluralModelLabel = 'Thị trường';
+    protected static ?string $pluralModelLabel = 'Chợ';
 
     public static function form(Schema $schema): Schema
     {
@@ -62,38 +59,37 @@ class MarketResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('name')
-    ->label('Tên thị trường')
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Tên thị trường')
                     ->searchable(),
 
-    Tables\Columns\TextColumn::make('address')
+                Tables\Columns\TextColumn::make('address')
                     ->label('Địa chỉ')
-        ->limit(50),
+                    ->limit(50),
 
                 Tables\Columns\IconColumn::make('active')
-        ->label('Kích hoạt')
-    ->boolean(),
+                    ->label('Kích hoạt')
+                    ->boolean(),
 
-    Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')
-        ->dateTime()
-    ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-        Tables\Columns\TextColumn::make('updated_at')
-            ->label('Ngày cập nhật')
-        ->dateTime()
-    ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('active')
                     ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
-                ViewAction::make(),
                 EditAction::make(),
             ])
             ->bulkActions([

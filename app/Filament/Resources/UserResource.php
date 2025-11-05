@@ -10,14 +10,12 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Resource;
-use Filament\Schemas;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
@@ -80,35 +78,35 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('name')
-    ->label('Họ tên')
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Họ tên')
                     ->searchable(),
 
-    Tables\Columns\TextColumn::make('email')
+                Tables\Columns\TextColumn::make('email')
                     ->label('Email')
-        ->searchable(),
+                    ->searchable(),
 
-    Tables\Columns\TextColumn::make('phone')
+                Tables\Columns\TextColumn::make('phone')
                     ->label('Số điện thoại'),
 
-    Tables\Columns\TextColumn::make('role')
+                Tables\Columns\TextColumn::make('role')
                     ->label('Vai trò'),
 
-    Tables\Columns\IconColumn::make('active')
-    ->label('Kích hoạt')
-    ->boolean(),
+                Tables\Columns\IconColumn::make('active')
+                    ->label('Kích hoạt')
+                    ->boolean(),
 
-    Tables\Columns\TextColumn::make('created_at')
-    ->label('Ngày tạo')
-    ->dateTime()
-    ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-    Tables\Columns\TextColumn::make('updated_at')
-    ->label('Ngày cập nhật')
-            ->dateTime()
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -117,7 +115,6 @@ class UserResource extends Resource
                     ->label('Trạng thái kích hoạt'),
             ])
             ->actions([
-                ViewAction::make(),
                 EditAction::make(),
                 Action::make('reset_password')
                     ->label('Đặt lại mật khẩu')

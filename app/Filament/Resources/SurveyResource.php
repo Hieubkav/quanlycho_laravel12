@@ -4,7 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SurveyResource\Pages;
 use App\Models\Survey;
-use Filament\Actions\ViewAction;
+use BackedEnum;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -12,7 +13,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -65,41 +65,41 @@ class SurveyResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('market.name')
-    ->label('Chợ')
-    ->searchable(),
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('market.name')
+                    ->label('Chợ')
+                    ->searchable(),
 
-    Tables\Columns\TextColumn::make('sale.name')
-    ->label('Nhân viên bán hàng')
-    ->searchable(),
+                Tables\Columns\TextColumn::make('sale.name')
+                    ->label('Nhân viên bán hàng')
+                    ->searchable(),
 
-    Tables\Columns\TextColumn::make('survey_day')
-    ->label('Ngày khảo sát')
-    ->date()
+                Tables\Columns\TextColumn::make('survey_day')
+                    ->label('Ngày khảo sát')
+                    ->date()
                     ->sortable(),
 
-    Tables\Columns\IconColumn::make('active')
+                Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
-        ->boolean(),
+                    ->boolean(),
 
-    Tables\Columns\TextColumn::make('created_at')
-    ->label('Ngày tạo')
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
-        ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-    Tables\Columns\TextColumn::make('updated_at')
-            ->label('Ngày cập nhật')
-            ->dateTime()
-        ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
-    ])
-    ->filters([
-    Tables\Filters\TernaryFilter::make('active')
-    ->label('Trạng thái kích hoạt'),
-        Tables\Filters\SelectFilter::make('market')
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\TernaryFilter::make('active')
+                    ->label('Trạng thái kích hoạt'),
+                Tables\Filters\SelectFilter::make('market')
                     ->label('Chợ')
                     ->relationship('market', 'name'),
                 Tables\Filters\SelectFilter::make('sale')
@@ -107,8 +107,8 @@ class SurveyResource extends Resource
                     ->relationship('sale', 'name'),
             ])
             ->actions([
-                ViewAction::make(),
-                // Không có Edit/Delete actions vì chỉ view
+                EditAction::make(),
+                // Không có Delete actions vì chỉ edit
             ])
             ->bulkActions([
                 // Không có bulk actions vì chỉ view
@@ -135,7 +135,7 @@ class SurveyResource extends Resource
     {
         return [
             'index' => Pages\ListSurveys::route('/'),
-            'view' => Pages\ViewSurvey::route('/{record}'),
+            'edit' => Pages\EditSurvey::route('/{record}/edit'),
         ];
     }
 
@@ -146,7 +146,7 @@ class SurveyResource extends Resource
 
     public static function canEdit($record): bool
     {
-        return false;
+        return true;
     }
 
     public static function canDelete($record): bool

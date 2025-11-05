@@ -25,21 +25,24 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create default setting
-        \App\Models\Setting::create([
+        \App\Models\Setting::updateOrCreate([
             'key' => 'global',
+        ], [
             'brand_name' => 'Quan Ly Cho',
             'active' => true,
             'order' => 1,
         ]);
 
         // Create admin user
-        User::factory()->create([
-            'name' => 'Admin',
+        User::updateOrCreate([
             'email' => 'admin@example.com',
+        ], [
+            'name' => 'Admin',
             'role' => 'admin',
             'phone' => '0123456789',
             'active' => true,
             'order' => 1,
+            'password' => bcrypt('password'),
         ]);
     }
 }

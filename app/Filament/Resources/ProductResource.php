@@ -4,23 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
-use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Textarea;
-use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use UnitEnum;
 
 class ProductResource extends Resource
 {
@@ -36,31 +29,31 @@ class ProductResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-    return $schema
-    ->schema([
-    \Filament\Forms\Components\TextInput::make('name')
-    ->label('Tên sản phẩm')
-    ->required()
+        return $schema
+            ->schema([
+                \Filament\Forms\Components\TextInput::make('name')
+                    ->label('Tên sản phẩm')
+                    ->required()
                     ->maxLength(255),
 
-    \Filament\Forms\Components\Select::make('unit_id')
-    ->label('Đơn vị')
+                \Filament\Forms\Components\Select::make('unit_id')
+                    ->label('Đơn vị')
                     ->relationship('unit', 'name')
-        ->required(),
+                    ->required(),
 
-    \Filament\Forms\Components\Toggle::make('is_default')
+                \Filament\Forms\Components\Toggle::make('is_default')
                     ->label('Là sản phẩm mặc định')
-        ->default(false),
+                    ->default(false),
 
                 \Filament\Forms\Components\Textarea::make('notes')
-        ->label('Ghi chú')
-    ->columnSpanFull(),
+                    ->label('Ghi chú')
+                    ->columnSpanFull(),
 
                 \Filament\Forms\Components\Toggle::make('active')
-        ->label('Kích hoạt')
-    ->default(true),
+                    ->label('Kích hoạt')
+                    ->default(true),
 
-        \Filament\Forms\Components\TextInput::make('order')
+                \Filament\Forms\Components\TextInput::make('order')
                     ->label('Thứ tự')
                     ->numeric()
                     ->default(0),
@@ -69,43 +62,42 @@ class ProductResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('name')
-    ->label('Tên sản phẩm')
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Tên sản phẩm')
                     ->searchable(),
 
-    Tables\Columns\TextColumn::make('unit.name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label('Đơn vị'),
 
-    Tables\Columns\IconColumn::make('is_default')
-    ->label('Mặc định')
+                Tables\Columns\IconColumn::make('is_default')
+                    ->label('Mặc định')
                     ->boolean(),
 
-    Tables\Columns\IconColumn::make('active')
+                Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
-        ->boolean(),
+                    ->boolean(),
 
-    Tables\Columns\TextColumn::make('created_at')
-    ->label('Ngày tạo')
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
-        ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-    Tables\Columns\TextColumn::make('updated_at')
-            ->label('Ngày cập nhật')
-            ->dateTime()
-        ->sortable()
-    ->toggleable(isToggledHiddenByDefault: true),
-    ])
-    ->filters([
-        Tables\Filters\TernaryFilter::make('active')
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\TernaryFilter::make('active')
                     ->label('Trạng thái kích hoạt'),
                 Tables\Filters\TernaryFilter::make('is_default')
                     ->label('Sản phẩm mặc định'),
             ])
             ->actions([
-                ViewAction::make(),
                 EditAction::make()
                     ->visible(fn (Product $record): bool => ! ($record->is_default && Auth::user()->role !== 'admin')),
                 DeleteAction::make()
