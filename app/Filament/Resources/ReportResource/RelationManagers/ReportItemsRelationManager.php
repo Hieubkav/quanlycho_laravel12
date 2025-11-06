@@ -95,7 +95,7 @@ class ReportItemsRelationManager extends RelationManager
                     ->badge(),
 
                 TextColumn::make('price')
-                    ->label('Giá')
+                    ->label('Giá trung bình')
                     ->money('VND')
                     ->sortable(),
 
