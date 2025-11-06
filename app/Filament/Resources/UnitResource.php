@@ -56,6 +56,12 @@ class UnitResource extends Resource
                     ->label('Tên đơn vị')
                     ->searchable(),
 
+                Tables\Columns\TextColumn::make('products_count')
+                    ->counts('products')
+                    ->label('Số sản phẩm')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),

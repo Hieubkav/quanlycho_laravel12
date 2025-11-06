@@ -5,6 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SurveyResource\Pages;
 use App\Models\Survey;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
@@ -13,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -100,6 +104,12 @@ class SurveyResource extends Resource
                     ->date()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('survey_items_count')
+                    ->counts('surveyItems')
+                    ->label('Số sản phẩm')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),
@@ -129,10 +139,44 @@ class SurveyResource extends Resource
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
-                // Không có Delete actions vì chỉ edit
+                DeleteAction::make()
+                    ->before(function (DeleteAction $action, Survey $record): void {
+                        if ($record->reportItems()->exists()) {
+                            Notification::make()
+                                ->title('Không thể xóa khảo sát')
+                                ->body('Khảo sát này đang được sử dụng trong báo cáo. Vui lòng xóa các mục báo cáo liên quan trước.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->bulkActions([
-                // Không có bulk actions vì chỉ view
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records): void {
+                            $surveysWithReportItems = collect($records)
+                                ->filter(fn (Survey $survey) => $survey->reportItems()->exists());
+
+                            if ($surveysWithReportItems->isNotEmpty()) {
+                                $surveyDays = $surveysWithReportItems
+                                    ->pluck('survey_day')
+                                    ->map(fn ($date) => $date->format('d/m/Y'))
+                                    ->join(', ');
+
+                                Notification::make()
+                                    ->title('Không thể xóa khảo sát')
+                                    ->body($surveyDays
+                                        ? "Các khảo sát ngày {$surveyDays} đang được sử dụng trong báo cáo. Vui lòng xử lý báo cáo trước."
+                                        : 'Một số khảo sát đang được sử dụng trong báo cáo. Vui lòng xử lý báo cáo trước.')
+                                    ->danger()
+                                    ->send();
+
+                                $action->cancel();
+                            }
+                        }),
+                ]),
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 $user = Auth::user();
@@ -156,23 +200,9 @@ class SurveyResource extends Resource
     {
         return [
             'index' => Pages\ListSurveys::route('/'),
+            'create' => Pages\CreateSurvey::route('/create'),
             'view' => Pages\ViewSurvey::route('/{record}'),
             'edit' => Pages\EditSurvey::route('/{record}/edit'),
         ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function canEdit($record): bool
-    {
-        return true;
-    }
-
-    public static function canDelete($record): bool
-    {
-        return false;
     }
 }

@@ -16,6 +16,10 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('save')
+                ->label('Lưu thay đổi')
+                ->submit('save')
+                ->keyBindings(['mod+s']),
             Actions\ViewAction::make(),
             Actions\DeleteAction::make()
                 ->before(function (Actions\DeleteAction $action): void {
@@ -46,5 +50,10 @@ class EditProduct extends EditRecord
                 })
                 ->visible(fn (Product $record): bool => ! ($record->is_default && Auth::user()?->role !== 'admin')),
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

@@ -94,6 +94,12 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('role')
                     ->label('Vai trò'),
 
+                Tables\Columns\TextColumn::make('reports_count')
+                    ->counts('reports')
+                    ->label('Số báo cáo')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),

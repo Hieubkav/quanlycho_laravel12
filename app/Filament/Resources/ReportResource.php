@@ -80,6 +80,12 @@ class ReportResource extends Resource
                     ->dateTime()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('report_items_count')
+                    ->counts('reportItems')
+                    ->label('Số dòng dữ liệu')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),

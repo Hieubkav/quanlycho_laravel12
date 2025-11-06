@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\UnitResource\Pages;
+namespace App\Filament\Resources\SurveyResource\Pages;
 
-use App\Filament\Resources\UnitResource;
+use App\Filament\Resources\SurveyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateUnit extends CreateRecord
+class CreateSurvey extends CreateRecord
 {
-    protected static string $resource = UnitResource::class;
+    protected static string $resource = SurveyResource::class;
 
     protected function getHeaderActions(): array
     {

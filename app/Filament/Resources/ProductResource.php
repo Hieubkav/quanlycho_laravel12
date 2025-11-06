@@ -72,6 +72,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('unit.name')
                     ->label('Đơn vị'),
 
+                Tables\Columns\TextColumn::make('survey_items_count')
+                    ->counts('surveyItems')
+                    ->label('Số lần khảo sát')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('Mặc định')
                     ->boolean(),

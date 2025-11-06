@@ -102,6 +102,18 @@ class SaleResource extends Resource
                     ->listWithLineBreaks()
                     ->badge(),
 
+                Tables\Columns\TextColumn::make('surveys_count')
+                    ->counts('surveys')
+                    ->label('Số khảo sát')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('markets_count')
+                    ->counts('markets')
+                    ->label('Số chợ phụ trách')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),

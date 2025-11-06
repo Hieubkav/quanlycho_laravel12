@@ -14,6 +14,10 @@ class EditUnit extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('save')
+                ->label('Lưu thay đổi')
+                ->submit('save')
+                ->keyBindings(['mod+s']),
             Actions\ViewAction::make(),
             Actions\DeleteAction::make()
                 ->before(function (Actions\DeleteAction $action): void {
@@ -28,5 +32,10 @@ class EditUnit extends EditRecord
                     }
                 }),
         ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
     }
 }

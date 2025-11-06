@@ -70,6 +70,18 @@ class MarketResource extends Resource
                     ->label('Địa chỉ')
                     ->limit(50),
 
+                Tables\Columns\TextColumn::make('surveys_count')
+                    ->counts('surveys')
+                    ->label('Số khảo sát')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('sales_count')
+                    ->counts('sales')
+                    ->label('Số nhân viên')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
                     ->boolean(),
