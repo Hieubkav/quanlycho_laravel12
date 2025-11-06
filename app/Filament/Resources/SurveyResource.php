@@ -6,6 +6,7 @@ use App\Filament\Resources\SurveyResource\Pages;
 use App\Models\Survey;
 use BackedEnum;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -107,6 +108,7 @@ class SurveyResource extends Resource
                     ->relationship('sale', 'name'),
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
                 // Không có Delete actions vì chỉ edit
             ])
@@ -127,7 +129,7 @@ class SurveyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\SurveyResource\RelationManagers\SurveyItemsRelationManager::class,
         ];
     }
 
@@ -135,6 +137,7 @@ class SurveyResource extends Resource
     {
         return [
             'index' => Pages\ListSurveys::route('/'),
+            'view' => Pages\ViewSurvey::route('/{record}'),
             'edit' => Pages\EditSurvey::route('/{record}/edit'),
         ];
     }

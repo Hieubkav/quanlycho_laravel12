@@ -11,8 +11,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions as ActionsComponent;
-use Filament\Schemas\Components\EmbeddedSchema;
-use Filament\Schemas\Components\Form as FormComponent;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
@@ -53,8 +51,6 @@ class Settings extends Page
                 'order' => 0,
             ];
     }
-
-
 
     public function content(Schema $schema): Schema
     {
@@ -102,8 +98,6 @@ class Settings extends Page
                     ->key('form-actions'),
             ]);
     }
-
-
 
     protected function getFormActions(): array
     {

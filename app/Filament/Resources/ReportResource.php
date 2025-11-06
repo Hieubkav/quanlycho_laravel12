@@ -108,11 +108,11 @@ class ReportResource extends Resource
                     }),
             ])
             ->actions([
-            ViewAction::make(),
-            // Có thể thêm action để generate report
-        ])
+                ViewAction::make(),
+                // Có thể thêm action để generate report
+            ])
             ->bulkActions([
-            BulkActionGroup::make([
+                BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function (DeleteBulkAction $action, $records): void {
                             $blockedReports = collect($records)
@@ -134,14 +134,14 @@ class ReportResource extends Resource
 
                             $action->cancel();
                         }),
-            ]),
-        ]);
+                ]),
+            ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\ReportResource\RelationManagers\ReportItemsRelationManager::class,
         ];
     }
 

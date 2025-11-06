@@ -33,7 +33,16 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Green,
                 'secondary' => Color::Blue,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            // ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->resources([
+                \App\Filament\Resources\UserResource::class,
+                \App\Filament\Resources\UnitResource::class,
+                \App\Filament\Resources\SurveyResource::class,
+                \App\Filament\Resources\SaleResource::class,
+                \App\Filament\Resources\ReportResource::class,
+                \App\Filament\Resources\ProductResource::class,
+                \App\Filament\Resources\MarketResource::class,
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

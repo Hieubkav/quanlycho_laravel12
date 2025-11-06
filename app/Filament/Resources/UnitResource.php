@@ -105,7 +105,7 @@ class UnitResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\UnitResource\RelationManagers\ProductsRelationManager::class,
         ];
     }
 
