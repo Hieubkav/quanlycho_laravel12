@@ -26,6 +26,8 @@ class SurveyResource extends Resource
 
     protected static ?string $pluralModelLabel = 'khảo sát';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return SurveyForm::configure($schema);
