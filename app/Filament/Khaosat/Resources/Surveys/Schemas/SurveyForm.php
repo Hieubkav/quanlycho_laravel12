@@ -11,6 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section as SchemaSection;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
 
 class SurveyForm
 {
@@ -28,11 +29,14 @@ class SurveyForm
         foreach ($products as $product) {
             $priceFields[] = TextInput::make('prices.'.$product->id.'.price')
                 ->label($product->name.' ('.$product->unit->name.')')
-                ->type('number')
+                ->numeric()
                 ->minValue(0)
-                ->step(0.01)
-                ->suffix('đ')
                 ->placeholder('0')
+                ->suffix('đ')
+                ->mask(RawJs::make(<<<'JS'
+                    $money($input, ',', '.', 0)
+                JS))
+                ->stripCharacters([',', '.'])
                 ->inlineLabel()
                 ->columnSpan(1);
 
