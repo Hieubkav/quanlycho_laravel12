@@ -60,6 +60,14 @@ class SaleResource extends Resource
                     ->required()
                     ->columnSpanFull(),
 
+                TextInput::make('password')
+                    ->label('Mật khẩu')
+                    ->password()
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+
                 Select::make('markets')
                     ->label('Chợ')
                     ->relationship('markets', 'name')

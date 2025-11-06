@@ -108,6 +108,7 @@ class SurveyForm
                 ->columns([
                     'default' => 1,
                     'md' => 2,
+                    'lg' => 2,
                     'xl' => 4,
                 ])
                 ->columnSpanFull(),

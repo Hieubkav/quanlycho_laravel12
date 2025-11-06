@@ -27,17 +27,24 @@ class SurveysTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('surveyItems')
+                TextColumn::make('items_count')
                     ->label('Số sản phẩm')
                     ->badge()
-                    ->formatStateUsing(fn ($record) => $record->surveyItems->count().' sản phẩm')
-                    ->color('success'),
+                    ->state(fn ($record) => $record->surveyItems->count())
+                    ->formatStateUsing(fn ($state) => $state.' sản phẩm')
+                    ->color('success')
+                    ->sortable(query: function ($query, $direction) {
+                        return $query->withCount('surveyItems')->orderBy('survey_items_count', $direction);
+                    }),
 
-                TextColumn::make('surveyItems')
+                TextColumn::make('total_value')
                     ->label('Tổng giá trị')
-                    ->money('VND')
-                    ->formatStateUsing(fn ($record) => number_format($record->surveyItems->sum('price'), 0, ',', '.').' đ')
-                    ->color('info'),
+                    ->state(fn ($record) => $record->surveyItems->sum('price'))
+                    ->formatStateUsing(fn ($state) => number_format($state, 0, ',', '.').' đ')
+                    ->color('info')
+                    ->sortable(query: function ($query, $direction) {
+                        return $query->withSum('surveyItems', 'price')->orderBy('survey_items_sum_price', $direction);
+                    }),
 
                 TextColumn::make('notes')
                     ->label('Ghi chú')

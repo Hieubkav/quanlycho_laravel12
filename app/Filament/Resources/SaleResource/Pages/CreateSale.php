@@ -10,18 +10,5 @@ class CreateSale extends CreateRecord
 {
     protected static string $resource = SaleResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\Action::make('create')
-                ->label('Tạo mới')
-                ->submit('create')
-                ->keyBindings(['mod+s']),
-        ];
-    }
-
-    protected function getFormActions(): array
-    {
-        return [];
-    }
+    //
 }
