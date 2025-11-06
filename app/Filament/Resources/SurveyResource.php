@@ -83,7 +83,8 @@ class SurveyResource extends Resource
                             ->content(fn (?Survey $record): string => $record?->updated_at?->format('d/m/Y H:i') ?? '-')
                             ->visibleOn('view'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->columnSpanFull(),
             ]);
     }
 
