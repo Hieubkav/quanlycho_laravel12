@@ -80,11 +80,13 @@ class ProductResource extends Resource
 
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('Mặc định')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\IconColumn::make('active')
                     ->label('Kích hoạt')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')

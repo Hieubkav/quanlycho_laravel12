@@ -4,16 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReportResource\Pages;
 use App\Models\Report;
+use App\Models\Survey;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -35,26 +40,92 @@ class ReportResource extends Resource
     {
         return $schema
             ->schema([
-                DatePicker::make('from_day')
-                    ->label('Từ ngày')
-                    ->required(),
+                Section::make('Khoảng thời gian báo cáo')
+                    ->schema([
+                        DatePicker::make('from_day')
+                            ->label('Từ ngày')
+                            ->required()
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('included_survey_ids', [])),
 
-                DatePicker::make('to_day')
-                    ->label('Đến ngày')
-                    ->required(),
+                        DatePicker::make('to_day')
+                            ->label('Đến ngày')
+                            ->required()
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('included_survey_ids', []))
+                            ->after('from_day'),
+                    ])
+                    ->columns(2),
 
-                Textarea::make('summary_rows')
-                    ->label('Tóm tắt báo cáo')
-                    ->columnSpanFull(),
+                Section::make('Chọn khảo sát')
+                    ->schema([
+                        CheckboxList::make('included_survey_ids')
+                            ->label('Danh sách khảo sát')
+                            ->options(function (callable $get): array {
+                                $fromDay = $get('from_day');
+                                $toDay = $get('to_day');
 
-                Toggle::make('active')
-                    ->label('Kích hoạt')
-                    ->default(true),
+                                if (! $fromDay || ! $toDay) {
+                                    return [];
+                                }
 
-                TextInput::make('order')
-                    ->label('Thứ tự')
-                    ->numeric()
-                    ->default(0),
+                                return Survey::query()
+                                    ->whereBetween('survey_day', [$fromDay, $toDay])
+                                    ->with(['market', 'sale'])
+                                    ->get()
+                                    ->mapWithKeys(function (Survey $survey) {
+                                        return [
+                                            $survey->id => sprintf(
+                                                '%s - %s - %s',
+                                                $survey->survey_day->format('d/m/Y'),
+                                                $survey->market->name ?? 'N/A',
+                                                $survey->sale->name ?? 'N/A'
+                                            ),
+                                        ];
+                                    })
+                                    ->toArray();
+                            })
+                            ->live()
+                            ->required()
+                            ->searchable()
+                            ->bulkToggleable()
+                            ->helperText('Chọn các khảo sát muốn đưa vào báo cáo. Báo cáo sẽ tính trung bình giá của từng sản phẩm từ các khảo sát đã chọn.')
+                            ->columnSpanFull(),
+
+                        Placeholder::make('survey_count')
+                            ->label('Số khảo sát đã chọn')
+                            ->content(fn (callable $get): string => count($get('included_survey_ids') ?? []).' khảo sát')
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
+
+                Section::make('Thông tin bổ sung')
+                    ->schema([
+                        Toggle::make('active')
+                            ->label('Kích hoạt')
+                            ->default(true),
+
+                        TextInput::make('order')
+                            ->label('Thứ tự')
+                            ->numeric()
+                            ->default(0),
+
+                        Placeholder::make('created_by')
+                            ->label('Người tạo')
+                            ->content(fn (?Report $record): string => $record?->createdByAdmin?->name ?? auth()->user()->name)
+                            ->visibleOn('view'),
+
+                        Placeholder::make('generated_at_display')
+                            ->label('Thời gian tạo')
+                            ->content(fn (?Report $record): string => $record?->generated_at?->format('d/m/Y H:i') ?? '-')
+                            ->visibleOn('view'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
@@ -115,30 +186,41 @@ class ReportResource extends Resource
             ])
             ->actions([
                 ViewAction::make(),
-                // Có thể thêm action để generate report
+                EditAction::make(),
+                DeleteAction::make()
+                    ->before(function (Report $record): void {
+                        // Xóa tất cả ReportItems trước khi xóa Report (cascade delete)
+                        $itemsCount = $record->reportItems()->count();
+                        $record->reportItems()->delete();
+
+                        if ($itemsCount > 0) {
+                            Notification::make()
+                                ->title('Đã xóa dữ liệu liên quan')
+                                ->body("Đã xóa {$itemsCount} dòng dữ liệu chi tiết cùng với báo cáo.")
+                                ->info()
+                                ->send();
+                        }
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->before(function (DeleteBulkAction $action, $records): void {
-                            $blockedReports = collect($records)
-                                ->filter(fn (Report $report) => $report->reportItems()->exists());
+                        ->before(function ($records): void {
+                            // Xóa tất cả ReportItems trước khi xóa Reports (cascade delete)
+                            $totalItemsDeleted = 0;
 
-                            if ($blockedReports->isEmpty()) {
-                                return;
+                            foreach ($records as $record) {
+                                $totalItemsDeleted += $record->reportItems()->count();
+                                $record->reportItems()->delete();
                             }
 
-                            $titles = $blockedReports
-                                ->map(fn (Report $report) => sprintf('#%d', $report->getKey()))
-                                ->join(', ');
-
-                            Notification::make()
-                                ->title('Không thể xóa báo cáo')
-                                ->body("Các báo cáo {$titles} vẫn còn dữ liệu chi tiết. Vui lòng xóa chi tiết trước.")
-                                ->danger()
-                                ->send();
-
-                            $action->cancel();
+                            if ($totalItemsDeleted > 0) {
+                                Notification::make()
+                                    ->title('Đã xóa dữ liệu liên quan')
+                                    ->body("Đã xóa {$totalItemsDeleted} dòng dữ liệu chi tiết cùng với các báo cáo.")
+                                    ->info()
+                                    ->send();
+                            }
                         }),
                 ]),
             ]);

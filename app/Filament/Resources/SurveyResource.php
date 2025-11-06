@@ -141,6 +141,7 @@ class SurveyResource extends Resource
                 EditAction::make(),
                 DeleteAction::make()
                     ->before(function (DeleteAction $action, Survey $record): void {
+                        // Check nếu Survey đang được sử dụng trong Report
                         if ($record->reportItems()->exists()) {
                             Notification::make()
                                 ->title('Không thể xóa khảo sát')
@@ -149,6 +150,20 @@ class SurveyResource extends Resource
                                 ->send();
 
                             $action->cancel();
+
+                            return;
+                        }
+
+                        // Xóa tất cả SurveyItems trước khi xóa Survey (cascade delete)
+                        $itemsCount = $record->surveyItems()->count();
+                        $record->surveyItems()->delete();
+
+                        if ($itemsCount > 0) {
+                            Notification::make()
+                                ->title('Đã xóa dữ liệu liên quan')
+                                ->body("Đã xóa {$itemsCount} sản phẩm khảo sát cùng với khảo sát này.")
+                                ->info()
+                                ->send();
                         }
                     }),
             ])
@@ -156,6 +171,7 @@ class SurveyResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function (DeleteBulkAction $action, $records): void {
+                            // Check nếu có Survey đang được sử dụng trong Report
                             $surveysWithReportItems = collect($records)
                                 ->filter(fn (Survey $survey) => $survey->reportItems()->exists());
 
@@ -174,6 +190,24 @@ class SurveyResource extends Resource
                                     ->send();
 
                                 $action->cancel();
+
+                                return;
+                            }
+
+                            // Xóa tất cả SurveyItems trước khi xóa Surveys (cascade delete)
+                            $totalItemsDeleted = 0;
+
+                            foreach ($records as $record) {
+                                $totalItemsDeleted += $record->surveyItems()->count();
+                                $record->surveyItems()->delete();
+                            }
+
+                            if ($totalItemsDeleted > 0) {
+                                Notification::make()
+                                    ->title('Đã xóa dữ liệu liên quan')
+                                    ->body("Đã xóa {$totalItemsDeleted} sản phẩm khảo sát cùng với các khảo sát.")
+                                    ->info()
+                                    ->send();
                             }
                         }),
                 ]),
