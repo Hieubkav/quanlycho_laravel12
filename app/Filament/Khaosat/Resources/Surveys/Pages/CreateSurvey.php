@@ -29,6 +29,7 @@ class CreateSurvey extends CreateRecord
         $data['active'] = true;
         $data['order'] = 0;
 
+        // Data is already in the correct format for afterCreate
         $this->cachedPrices = $prices;
 
         return $data;

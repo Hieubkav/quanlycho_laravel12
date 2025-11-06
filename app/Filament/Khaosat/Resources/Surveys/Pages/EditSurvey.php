@@ -28,12 +28,16 @@ class EditSurvey extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $surveyItems = $this->record->surveyItems()->get();
-        $prices = [];
 
+        // Initialize prices array with existing survey data
+        $prices = [];
         foreach ($surveyItems as $item) {
             $prices[$item->product_id] = [
                 'price' => $item->price,
                 'notes' => $item->notes,
+                'product_id' => $item->product_id,
+                'product_name' => $item->product->name,
+                'unit_name' => $item->product->unit->name,
             ];
         }
 
@@ -47,6 +51,7 @@ class EditSurvey extends EditRecord
         $prices = $data['prices'] ?? [];
         unset($data['prices']);
 
+        // Data is already in the correct format for afterSave
         $this->cachedPrices = $prices;
 
         return $data;

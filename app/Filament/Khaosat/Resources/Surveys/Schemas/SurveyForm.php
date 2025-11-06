@@ -8,31 +8,54 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\View;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section as SchemaSection;
 use Filament\Schemas\Schema;
 
 class SurveyForm
 {
     public static function configure(Schema $schema): Schema
     {
-        // Build price fields array BEFORE returning schema
+        // Build products data
         $products = Product::where('active', true)
             ->where('is_default', true)
             ->with('unit')
             ->orderBy('order')
             ->get();
 
-        // Single view for ALL products (không loop View components)
-        $productsTableView = View::make('filament.forms.components.products-table')
-            ->viewData([
-                'products' => $products,
-            ])
-            ->columnSpanFull();
+        // Create dynamic price fields for each product
+        $priceFields = [];
+        foreach ($products as $product) {
+            $priceFields[] = TextInput::make('prices.'.$product->id.'.price')
+                ->label($product->name.' ('.$product->unit->name.')')
+                ->type('number')
+                ->minValue(0)
+                ->step(0.01)
+                ->suffix('đ')
+                ->placeholder('0')
+                ->inlineLabel()
+                ->columnSpan(1);
+
+            $priceFields[] = Textarea::make('prices.'.$product->id.'.notes')
+                ->label('Ghi chú')
+                ->rows(2)
+                ->placeholder('Ghi chú (tùy chọn)')
+                ->inlineLabel()
+                ->columnSpan(1);
+
+            $priceFields[] = Hidden::make('prices.'.$product->id.'.product_id')
+                ->default($product->id);
+
+            $priceFields[] = Hidden::make('prices.'.$product->id.'.product_name')
+                ->default($product->name);
+
+            $priceFields[] = Hidden::make('prices.'.$product->id.'.unit_name')
+                ->default($product->unit->name);
+        }
 
         // Now build the complete schema
         $schemaComponents = [
-            Section::make('Thông tin khảo sát')
+            SchemaSection::make('Thông tin khảo sát')
                 ->description('Chọn chợ và ngày khảo sát')
                 ->schema([
                     Select::make('market_id')
@@ -72,11 +95,10 @@ class SurveyForm
                 ->columns(2)
                 ->collapsible(),
 
-            Section::make('Giá sản phẩm hôm nay')
-                ->description('Nhập giá cho tất cả sản phẩm (để trống nếu không có giá) • Tổng: '.count($products).' sản phẩm')
-                ->schema([
-                    $productsTableView,
-                ])
+            SchemaSection::make('Giá sản phẩm hôm nay')
+                ->description('Nhập giá cho tất cả sản phẩm (để trống nếu không có giá)')
+                ->schema($priceFields)
+                ->columns(2)
                 ->compact(),
         ];
 
