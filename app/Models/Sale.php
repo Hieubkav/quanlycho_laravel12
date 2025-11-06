@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Sale extends Authenticatable
+class Sale extends Authenticatable implements FilamentUser
 {
     use HasFactory;
 
@@ -36,5 +38,10 @@ class Sale extends Authenticatable
     public function surveys()
     {
         return $this->hasMany(Survey::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->active && $panel->getId() === 'khaosat';
     }
 }
