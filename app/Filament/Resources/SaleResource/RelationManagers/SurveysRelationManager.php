@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\SaleResource\RelationManagers;
 
-use Filament\Actions\ViewAction;
+use App\Filament\Resources\SurveyResource;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -68,7 +69,10 @@ class SurveysRelationManager extends RelationManager
                 // Surveys are managed from SurveyResource
             ])
             ->recordActions([
-                ViewAction::make(),
+                Action::make('view')
+                    ->label('Xem chi tiết')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn ($record) => SurveyResource::getUrl('view', ['record' => $record])),
             ])
             ->toolbarActions([
                 //

@@ -8,11 +8,13 @@ use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -35,32 +37,49 @@ class SurveyResource extends Resource
     {
         return $schema
             ->schema([
-                Select::make('market_id')
-                    ->label('Chợ')
-                    ->relationship('market', 'name')
-                    ->required(),
+                Section::make('Thông tin khảo sát')
+                    ->schema([
+                        Select::make('market_id')
+                            ->label('Chợ')
+                            ->relationship('market', 'name')
+                            ->required(),
 
-                Select::make('sale_id')
-                    ->label('Nhân viên bán hàng')
-                    ->relationship('sale', 'name')
-                    ->required(),
+                        Select::make('sale_id')
+                            ->label('Nhân viên bán hàng')
+                            ->relationship('sale', 'name')
+                            ->required(),
 
-                DatePicker::make('survey_day')
-                    ->label('Ngày khảo sát')
-                    ->required(),
+                        DatePicker::make('survey_day')
+                            ->label('Ngày khảo sát')
+                            ->required()
+                            ->native(false)
+                            ->displayFormat('d/m/Y'),
 
-                Textarea::make('notes')
-                    ->label('Ghi chú')
-                    ->columnSpanFull(),
+                        Toggle::make('active')
+                            ->label('Kích hoạt')
+                            ->default(true),
 
-                Toggle::make('active')
-                    ->label('Kích hoạt')
-                    ->default(true),
+                        TextInput::make('order')
+                            ->label('Thứ tự')
+                            ->numeric()
+                            ->default(0),
 
-                TextInput::make('order')
-                    ->label('Thứ tự')
-                    ->numeric()
-                    ->default(0),
+                        Textarea::make('notes')
+                            ->label('Ghi chú')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                        Placeholder::make('created_at')
+                            ->label('Ngày tạo')
+                            ->content(fn (?Survey $record): string => $record?->created_at?->format('d/m/Y H:i') ?? '-')
+                            ->visibleOn('view'),
+
+                        Placeholder::make('updated_at')
+                            ->label('Cập nhật lần cuối')
+                            ->content(fn (?Survey $record): string => $record?->updated_at?->format('d/m/Y H:i') ?? '-')
+                            ->visibleOn('view'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
