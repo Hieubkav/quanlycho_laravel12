@@ -123,6 +123,7 @@ class MarketResource extends Resource
     public static function getRelations(): array
     {
         return [
+            \App\Filament\Resources\MarketResource\RelationManagers\SalesRelationManager::class,
             \App\Filament\Resources\MarketResource\RelationManagers\SurveysRelationManager::class,
         ];
     }
