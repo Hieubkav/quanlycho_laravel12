@@ -14,6 +14,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
@@ -42,13 +43,52 @@ class ReportResource extends Resource
             ->schema([
                 Section::make('Khoảng thời gian báo cáo')
                     ->schema([
+                        Select::make('quick_range')
+                            ->label('Chọn nhanh')
+                            ->placeholder('Chọn khoảng thời gian hoặc nhập thủ công')
+                            ->options([
+                                'today' => 'Hôm nay',
+                                'this_week' => 'Tuần này',
+                                'this_month' => 'Tháng này',
+                                'this_year' => 'Năm nay',
+                                'last_month' => 'Tháng trước',
+                                'last_year' => 'Năm trước',
+                                'all' => 'Tất cả',
+                            ])
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $dates = match ($state) {
+                                    'today' => [now(), now()],
+                                    'this_week' => [now()->startOfWeek(), now()->endOfWeek()],
+                                    'this_month' => [now()->startOfMonth(), now()->endOfMonth()],
+                                    'this_year' => [now()->startOfYear(), now()->endOfYear()],
+                                    'last_month' => [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()],
+                                    'last_year' => [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()],
+                                    'all' => [Survey::min('survey_day'), Survey::max('survey_day')],
+                                    default => [null, null],
+                                };
+
+                                $set('from_day', $dates[0]);
+                                $set('to_day', $dates[1]);
+                                $set('included_survey_ids', []);
+                            })
+                            ->native(false)
+                            ->columnSpanFull(),
+
                         DatePicker::make('from_day')
                             ->label('Từ ngày')
                             ->required()
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('included_survey_ids', [])),
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('included_survey_ids', []);
+                                $set('quick_range', null);
+                            }),
 
                         DatePicker::make('to_day')
                             ->label('Đến ngày')
@@ -56,8 +96,11 @@ class ReportResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn ($state, callable $set) => $set('included_survey_ids', []))
-                            ->after('from_day'),
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('included_survey_ids', []);
+                                $set('quick_range', null);
+                            })
+                            ->afterOrEqual('from_day'),
                     ])
                     ->columns(2),
 
