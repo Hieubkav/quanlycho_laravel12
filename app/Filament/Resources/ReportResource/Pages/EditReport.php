@@ -19,18 +19,7 @@ class EditReport extends EditRecord
                 ->submit('save')
                 ->keyBindings(['mod+s']),
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make()
-                ->before(function (Actions\DeleteAction $action): void {
-                    if ($this->record->reportItems()->exists()) {
-                        Notification::make()
-                            ->title('Không thể xóa báo cáo')
-                            ->body('Báo cáo vẫn còn dữ liệu chi tiết. Hãy xóa hoặc di chuyển các dòng báo cáo trước.')
-                            ->danger()
-                            ->send();
-
-                        $action->cancel();
-                    }
-                }),
+            Actions\DeleteAction::make(),
         ];
     }
 

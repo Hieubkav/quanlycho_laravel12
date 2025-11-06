@@ -230,41 +230,11 @@ class ReportResource extends Resource
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make()
-                    ->before(function (Report $record): void {
-                        // Xóa tất cả ReportItems trước khi xóa Report (cascade delete)
-                        $itemsCount = $record->reportItems()->count();
-                        $record->reportItems()->delete();
-
-                        if ($itemsCount > 0) {
-                            Notification::make()
-                                ->title('Đã xóa dữ liệu liên quan')
-                                ->body("Đã xóa {$itemsCount} dòng dữ liệu chi tiết cùng với báo cáo.")
-                                ->info()
-                                ->send();
-                        }
-                    }),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->before(function ($records): void {
-                            // Xóa tất cả ReportItems trước khi xóa Reports (cascade delete)
-                            $totalItemsDeleted = 0;
-
-                            foreach ($records as $record) {
-                                $totalItemsDeleted += $record->reportItems()->count();
-                                $record->reportItems()->delete();
-                            }
-
-                            if ($totalItemsDeleted > 0) {
-                                Notification::make()
-                                    ->title('Đã xóa dữ liệu liên quan')
-                                    ->body("Đã xóa {$totalItemsDeleted} dòng dữ liệu chi tiết cùng với các báo cáo.")
-                                    ->info()
-                                    ->send();
-                            }
-                        }),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
