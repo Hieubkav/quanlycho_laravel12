@@ -10,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -80,7 +81,23 @@ class UnitResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records) {
+                            $unitsWithProducts = collect($records)
+                                ->filter(fn ($unit) => $unit->products()->exists());
+
+                            if ($unitsWithProducts->isNotEmpty()) {
+                                $unitNames = $unitsWithProducts->pluck('name')->join(', ');
+
+                                Notification::make()
+                                    ->title('Không thể xóa các đơn vị')
+                                    ->body("Các đơn vị sau đang được sử dụng bởi sản phẩm: {$unitNames}. Vui lòng xóa các sản phẩm liên quan trước.")
+                                    ->danger()
+                                    ->send();
+
+                                $action->cancel();
+                            }
+                        }),
                 ]),
             ]);
     }

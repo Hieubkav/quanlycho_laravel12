@@ -16,6 +16,8 @@ class MarketFactory extends Factory
      */
     public function definition(): array
     {
+        static $usedMarkets = [];
+
         $markets = [
             ['name' => 'Chợ Cồn', 'address' => 'Đường Nguyễn Văn Linh, Phường Cồn, Ninh Kiều, Cần Thơ', 'notes' => 'Chợ nổi tiếng với hải sản tươi sống'],
             ['name' => 'Chợ Xóm Chiếu', 'address' => 'Đường Xóm Chiếu, Phường Xóm Chiếu, Ninh Kiều, Cần Thơ', 'notes' => 'Chợ truyền thống với nhiều loại rau củ'],
@@ -27,7 +29,19 @@ class MarketFactory extends Factory
             ['name' => 'Chợ Phong Điền', 'address' => 'Đường Nguyễn Văn Linh, Thị trấn Phong Điển, Phong Điền, Cần Thơ', 'notes' => 'Chợ huyện với trái cây đặc trưng'],
         ];
 
-        $market = $this->faker->randomElement($markets);
+        // Filter out used markets
+        $availableMarkets = array_filter($markets, function ($market) use ($usedMarkets) {
+            return ! in_array($market['name'], $usedMarkets);
+        });
+
+        // If all markets are used, reset the list
+        if (empty($availableMarkets)) {
+            $usedMarkets = [];
+            $availableMarkets = $markets;
+        }
+
+        $market = $this->faker->randomElement($availableMarkets);
+        $usedMarkets[] = $market['name'];
 
         return [
             'name' => $market['name'],

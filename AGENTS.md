@@ -2,6 +2,8 @@
 
 Trả lời bằng tiếng việt
 
+Trước khi làm bất cứ việc gì liên quan đến một dependency, hãy đọc tài liệu của dependency đó bằng cách sử dụng search-docs tool nếu có sẵn.
+
 <!--CUSTOME:END -->
 
 <!-- OPENSPEC:START -->
@@ -246,6 +248,9 @@ Forms\Components\Select::make('user_id')
 - The `Form` & `Infolist` layout components have been moved to `Filament\Schemas\Components`, for example `Grid`, `Section`, `Fieldset`, `Tabs`, `Wizard`, etc.
 - A new `Repeater` component for Forms has been added.
 - Icons now use the `Filament\Support\Icons\Heroicon` Enum by default. Other options are available and documented.
+
+### Delete Actions & Notifications
+- Khi dùng `DeleteAction` hoặc `DeleteBulkAction`, luôn kiểm tra quan hệ quan trọng trước khi xoá. Nếu còn dữ liệu liên quan, huỷ hành động bằng `$action->cancel()` và hiển thị `Notification::make()->danger()` giải thích lý do thay vì để truy vấn gây lỗi.
 
 ### Organize Component Classes Structure
 - Schema components: `Schemas/Components/`

@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -94,7 +95,27 @@ class MarketResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records): void {
+                            $blockedMarkets = collect($records)
+                                ->filter(fn (Market $market) => $market->surveys()->exists());
+
+                            if ($blockedMarkets->isEmpty()) {
+                                return;
+                            }
+
+                            $names = $blockedMarkets->pluck('name')->filter()->join(', ');
+
+                            Notification::make()
+                                ->title('Không thể xóa chợ')
+                                ->body($names
+                                    ? "Các chợ sau đang có khảo sát liên quan: {$names}. Vui lòng xử lý khảo sát trước."
+                                    : 'Một số chợ đang có khảo sát liên quan. Vui lòng xử lý khảo sát trước.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }),
                 ]),
             ]);
     }

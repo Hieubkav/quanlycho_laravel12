@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReportResource\Pages;
 use App\Models\Report;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
@@ -11,9 +12,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use BackedEnum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,45 +60,45 @@ class ReportResource extends Resource
 
     public static function table(Table $table): Table
     {
-    return $table
-    ->columns([
-    Tables\Columns\TextColumn::make('from_day')
-    ->label('Từ ngày')
-    ->date()
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('from_day')
+                    ->label('Từ ngày')
+                    ->date()
                     ->sortable(),
 
-    Tables\Columns\TextColumn::make('to_day')
-    ->label('Đến ngày')
+                Tables\Columns\TextColumn::make('to_day')
+                    ->label('Đến ngày')
                     ->date()
-        ->sortable(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('createdByAdmin.name')
-        ->label('Người tạo'),
+                    ->label('Người tạo'),
 
-    Tables\Columns\TextColumn::make('generated_at')
+                Tables\Columns\TextColumn::make('generated_at')
                     ->label('Thời gian tạo')
-        ->dateTime()
-    ->sortable(),
+                    ->dateTime()
+                    ->sortable(),
 
-    Tables\Columns\IconColumn::make('active')
-    ->label('Kích hoạt')
-    ->boolean(),
+                Tables\Columns\IconColumn::make('active')
+                    ->label('Kích hoạt')
+                    ->boolean(),
 
-        Tables\Columns\TextColumn::make('created_at')
-            ->label('Ngày tạo')
-        ->dateTime()
-    ->sortable()
-        ->toggleable(isToggledHiddenByDefault: true),
-    ])
-    ->filters([
-    Tables\Filters\TernaryFilter::make('active')
-    ->label('Trạng thái kích hoạt'),
-    Tables\Filters\Filter::make('date_range')
-    ->label('Khoảng thời gian')
-    ->form([
-    DatePicker::make('from_day')
-            ->label('Từ ngày'),
-                DatePicker::make('to_day')
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\TernaryFilter::make('active')
+                    ->label('Trạng thái kích hoạt'),
+                Tables\Filters\Filter::make('date_range')
+                    ->label('Khoảng thời gian')
+                    ->form([
+                        DatePicker::make('from_day')
+                            ->label('Từ ngày'),
+                        DatePicker::make('to_day')
                             ->label('Đến ngày'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -107,14 +108,34 @@ class ReportResource extends Resource
                     }),
             ])
             ->actions([
-                ViewAction::make(),
-                // Có thể thêm action để generate report
-            ])
+            ViewAction::make(),
+            // Có thể thêm action để generate report
+        ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records): void {
+                            $blockedReports = collect($records)
+                                ->filter(fn (Report $report) => $report->reportItems()->exists());
+
+                            if ($blockedReports->isEmpty()) {
+                                return;
+                            }
+
+                            $titles = $blockedReports
+                                ->map(fn (Report $report) => sprintf('#%d', $report->getKey()))
+                                ->join(', ');
+
+                            Notification::make()
+                                ->title('Không thể xóa báo cáo')
+                                ->body("Các báo cáo {$titles} vẫn còn dữ liệu chi tiết. Vui lòng xóa chi tiết trước.")
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }),
+            ]),
+        ]);
     }
 
     public static function getRelations(): array

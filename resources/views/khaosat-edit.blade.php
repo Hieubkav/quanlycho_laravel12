@@ -3,13 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Khảo sát giá sản phẩm</title>
-    @fluxAppearance
+    <title>Chỉnh sửa khảo sát - Khảo sát giá sản phẩm</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireScripts
 </head>
 <body class="antialiased">
-    <livewire:khaosat.dashboard />
-    @fluxScripts
+    <livewire:khaosat.edit-survey :survey="$survey" />
 </body>
 </html>

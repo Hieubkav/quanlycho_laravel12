@@ -66,7 +66,8 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên sản phẩm')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('unit.name')
                     ->label('Đơn vị'),
@@ -101,11 +102,116 @@ class ProductResource extends Resource
                 EditAction::make()
                     ->visible(fn (Product $record): bool => ! ($record->is_default && Auth::user()->role !== 'admin')),
                 DeleteAction::make()
+                    ->before(function (Product $record) {
+                        if ($record->is_default && Auth::user()->role !== 'admin') {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Không thể xóa')
+                                ->body('Không thể xóa sản phẩm mặc định. Chỉ Admin mới có quyền xóa sản phẩm mặc định.')
+                                ->danger()
+                                ->send();
+
+                            return false;
+                        }
+
+                        if (\App\Models\SurveyItem::where('product_id', $record->id)->exists()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Không thể xóa')
+                                ->body('Không thể xóa sản phẩm này vì đã được sử dụng trong các khảo sát. Hãy xóa các khảo sát liên quan trước.')
+                                ->danger()
+                                ->send();
+
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    ->action(function (Product $record) {
+                        try {
+                            $record->delete();
+                            \Filament\Notifications\Notification::make()
+                                ->title('Đã xóa thành công')
+                                ->body('Sản phẩm đã được xóa.')
+                                ->success()
+                                ->send();
+                        } catch (\Illuminate\Database\QueryException $e) {
+                            if ($e->getCode() === '23000') {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Không thể xóa')
+                                    ->body('Không thể xóa sản phẩm này vì đã được sử dụng trong các khảo sát. Hãy xóa các khảo sát liên quan trước.')
+                                    ->danger()
+                                    ->send();
+                            } else {
+                                throw $e;
+                            }
+                        }
+                    })
                     ->visible(fn (Product $record): bool => ! ($record->is_default && Auth::user()->role !== 'admin')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            $restrictedRecords = $records->filter(function ($record) {
+                                return $record->is_default && Auth::user()->role !== 'admin';
+                            });
+
+                            $usedRecords = $records->filter(function ($record) {
+                                return \App\Models\SurveyItem::where('product_id', $record->id)->exists();
+                            });
+
+                            if ($restrictedRecords->isNotEmpty() || $usedRecords->isNotEmpty()) {
+                                $messages = [];
+
+                                if ($restrictedRecords->isNotEmpty()) {
+                                    $messages[] = 'Không thể xóa sản phẩm mặc định. Chỉ Admin mới có quyền xóa sản phẩm mặc định.';
+                                }
+
+                                if ($usedRecords->isNotEmpty()) {
+                                    $messages[] = 'Không thể xóa sản phẩm đã được sử dụng trong các khảo sát. Hãy xóa các khảo sát liên quan trước.';
+                                }
+
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Không thể xóa một số sản phẩm')
+                                    ->body(implode(' ', $messages))
+                                    ->danger()
+                                    ->send();
+
+                                return false;
+                            }
+                        })
+                        ->action(function ($records) {
+                            $deletedCount = 0;
+                            $failedCount = 0;
+
+                            foreach ($records as $record) {
+                                try {
+                                    $record->delete();
+                                    $deletedCount++;
+                                } catch (\Illuminate\Database\QueryException $e) {
+                                    if ($e->getCode() === '23000') {
+                                        $failedCount++;
+                                    } else {
+                                        throw $e;
+                                    }
+                                }
+                            }
+
+                            if ($deletedCount > 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Đã xóa thành công')
+                                    ->body("Đã xóa {$deletedCount} sản phẩm".($failedCount > 0 ? ". {$failedCount} sản phẩm không thể xóa vì đang được sử dụng." : '.'))
+                                    ->success()
+                                    ->send();
+                            }
+
+                            if ($failedCount > 0 && $deletedCount === 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Không thể xóa')
+                                    ->body('Không thể xóa các sản phẩm đã chọn vì đang được sử dụng trong các khảo sát.')
+                                    ->danger()
+                                    ->send();
+                            }
+                        })
                         ->visible(fn (): bool => Auth::user()->role === 'admin'),
                 ]),
             ]);

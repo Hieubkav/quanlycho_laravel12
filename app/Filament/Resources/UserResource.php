@@ -146,7 +146,27 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records): void {
+                            $usersWithReports = collect($records)
+                                ->filter(fn (User $user) => $user->reports()->exists());
+
+                            if ($usersWithReports->isEmpty()) {
+                                return;
+                            }
+
+                            $names = $usersWithReports->pluck('name')->filter()->join(', ');
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Không thể xóa quản trị viên')
+                                ->body($names
+                                    ? "Các tài khoản sau đã tạo báo cáo: {$names}. Vui lòng chuyển hoặc xóa báo cáo trước khi xóa."
+                                    : 'Một số tài khoản đã tạo báo cáo. Vui lòng xử lý báo cáo trước khi xóa.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }),
                 ]),
             ]);
     }

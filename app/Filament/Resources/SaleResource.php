@@ -154,7 +154,27 @@ class SaleResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records): void {
+                            $salesWithSurveys = collect($records)
+                                ->filter(fn (Sale $sale) => $sale->surveys()->exists());
+
+                            if ($salesWithSurveys->isEmpty()) {
+                                return;
+                            }
+
+                            $names = $salesWithSurveys->pluck('name')->filter()->join(', ');
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Không thể xóa nhân viên bán hàng')
+                                ->body($names
+                                    ? "Các nhân viên sau đang có khảo sát liên quan: {$names}. Vui lòng xử lý khảo sát trước."
+                                    : 'Một số nhân viên đang có khảo sát liên quan. Vui lòng xử lý khảo sát trước.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }),
                 ]),
             ]);
     }
