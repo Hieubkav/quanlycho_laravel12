@@ -26,9 +26,12 @@ class SurveyForm
 
         // Create dynamic price fields for each product
         $priceFields = [];
-        foreach ($products as $product) {
+        foreach ($products as $index => $product) {
+            $unitName = $product->unit?->name ?? 'N/A';
+            $stt = $index + 1;
+
             $priceFields[] = TextInput::make('prices.'.$product->id.'.price')
-                ->label($product->name.' ('.$product->unit->name.')')
+                ->label($stt.'. '.$product->name.' ('.$unitName.')')
                 ->numeric()
                 ->minValue(0)
                 ->placeholder('0')
@@ -54,7 +57,7 @@ class SurveyForm
                 ->default($product->name);
 
             $priceFields[] = Hidden::make('prices.'.$product->id.'.unit_name')
-                ->default($product->unit->name);
+                ->default($unitName);
         }
 
         // Now build the complete schema
@@ -102,8 +105,12 @@ class SurveyForm
             SchemaSection::make('Giá sản phẩm hôm nay')
                 ->description('Nhập giá cho tất cả sản phẩm (để trống nếu không có giá)')
                 ->schema($priceFields)
-                ->columns(2)
-                ->compact(),
+                ->columns([
+                    'default' => 1,
+                    'md' => 2,
+                    'xl' => 4,
+                ])
+                ->columnSpanFull(),
         ];
 
         return $schema

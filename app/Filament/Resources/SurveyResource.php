@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SurveyResource\Pages;
+use App\Filament\Resources\SurveyResource\Schemas\SurveyFormBuilder;
 use App\Models\Survey;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -10,15 +11,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -39,53 +33,7 @@ class SurveyResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                Section::make('Thông tin khảo sát')
-                    ->schema([
-                        Select::make('market_id')
-                            ->label('Chợ')
-                            ->relationship('market', 'name')
-                            ->required(),
-
-                        Select::make('sale_id')
-                            ->label('Người khảo sát')
-                            ->relationship('sale', 'name')
-                            ->required(),
-
-                        DatePicker::make('survey_day')
-                            ->label('Ngày khảo sát')
-                            ->required()
-                            ->native(false)
-                            ->displayFormat('d/m/Y'),
-
-                        Toggle::make('active')
-                            ->label('Kích hoạt')
-                            ->default(true),
-
-                        TextInput::make('order')
-                            ->label('Thứ tự')
-                            ->numeric()
-                            ->default(0),
-
-                        Textarea::make('notes')
-                            ->label('Ghi chú')
-                            ->rows(3)
-                            ->columnSpanFull(),
-
-                        Placeholder::make('created_at')
-                            ->label('Ngày tạo')
-                            ->content(fn (?Survey $record): string => $record?->created_at?->format('d/m/Y H:i') ?? '-')
-                            ->visibleOn('view'),
-
-                        Placeholder::make('updated_at')
-                            ->label('Cập nhật lần cuối')
-                            ->content(fn (?Survey $record): string => $record?->updated_at?->format('d/m/Y H:i') ?? '-')
-                            ->visibleOn('view'),
-                    ])
-                    ->columns(2)
-                    ->columnSpanFull(),
-            ]);
+        return SurveyFormBuilder::make($schema);
     }
 
     public static function table(Table $table): Table
