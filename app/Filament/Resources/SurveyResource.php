@@ -49,7 +49,7 @@ class SurveyResource extends Resource
                             ->required(),
 
                         Select::make('sale_id')
-                            ->label('Nhân viên bán hàng')
+                            ->label('Người khảo sát')
                             ->relationship('sale', 'name')
                             ->required(),
 
@@ -97,7 +97,7 @@ class SurveyResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('sale.name')
-                    ->label('Nhân viên bán hàng')
+                    ->label('Người khảo sát')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('survey_day')
@@ -134,7 +134,7 @@ class SurveyResource extends Resource
                     ->label('Chợ')
                     ->relationship('market', 'name'),
                 Tables\Filters\SelectFilter::make('sale')
-                    ->label('Nhân viên bán hàng')
+                    ->label('Người khảo sát')
                     ->relationship('sale', 'name'),
             ])
             ->actions([

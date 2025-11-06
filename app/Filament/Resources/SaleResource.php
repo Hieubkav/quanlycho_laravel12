@@ -27,11 +27,11 @@ class SaleResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationLabel = 'Nhân viên bán hàng';
+    protected static ?string $navigationLabel = 'Người khảo sát';
 
-    protected static ?string $modelLabel = 'Nhân viên bán hàng';
+    protected static ?string $modelLabel = 'Người khảo sát';
 
-    protected static ?string $pluralModelLabel = 'Nhân viên bán hàng';
+    protected static ?string $pluralModelLabel = 'Người khảo sát';
 
     public static function form(Schema $schema): Schema
     {
@@ -142,7 +142,7 @@ class SaleResource extends Resource
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Tạo mật khẩu mới')
-                    ->modalDescription('Hệ thống sẽ tạo mật khẩu ngẫu nhiên mới và gửi thông tin đăng nhập về email của nhân viên bán hàng.')
+                    ->modalDescription('Hệ thống sẽ tạo mật khẩu ngẫu nhiên mới và gửi thông tin đăng nhập về email của Người khảo sát.')
                     ->modalSubmitActionLabel('Tạo mật khẩu')
                     ->action(function (Sale $record) {
                         $newPassword = \Illuminate\Support\Str::random(12);
@@ -178,7 +178,7 @@ class SaleResource extends Resource
                             $names = $salesWithSurveys->pluck('name')->filter()->join(', ');
 
                             \Filament\Notifications\Notification::make()
-                                ->title('Không thể xóa nhân viên bán hàng')
+                                ->title('Không thể xóa Người khảo sát')
                                 ->body($names
                                     ? "Các nhân viên sau đang có khảo sát liên quan: {$names}. Vui lòng xử lý khảo sát trước."
                                     : 'Một số nhân viên đang có khảo sát liên quan. Vui lòng xử lý khảo sát trước.')

@@ -15,7 +15,7 @@ class SalesRelationManager extends RelationManager
 {
     protected static string $relationship = 'sales';
 
-    protected static ?string $title = 'Nhân viên bán hàng';
+    protected static ?string $title = 'Người khảo sát';
 
     protected static ?string $recordTitleAttribute = 'name';
 

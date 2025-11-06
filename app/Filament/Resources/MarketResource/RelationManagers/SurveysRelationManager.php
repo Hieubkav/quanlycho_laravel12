@@ -40,7 +40,7 @@ class SurveysRelationManager extends RelationManager
                     ->sortable(),
 
                 TextColumn::make('sale.name')
-                    ->label('Nhân viên bán hàng')
+                    ->label('Người khảo sát')
                     ->searchable()
                     ->badge()
                     ->color('info'),

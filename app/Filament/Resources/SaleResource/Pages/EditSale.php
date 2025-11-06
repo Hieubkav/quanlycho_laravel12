@@ -23,7 +23,7 @@ class EditSale extends EditRecord
                 ->before(function (Actions\DeleteAction $action): void {
                     if ($this->record->surveys()->exists()) {
                         Notification::make()
-                            ->title('Không thể xóa nhân viên bán hàng')
+                            ->title('Không thể xóa Người khảo sát')
                             ->body('Nhân viên này đang có khảo sát liên quan. Vui lòng xóa hoặc chuyển khảo sát trước khi tiếp tục.')
                             ->danger()
                             ->send();
