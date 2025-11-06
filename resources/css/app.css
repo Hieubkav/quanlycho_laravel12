@@ -64,3 +64,25 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+/* Filament Full Width Layout - Remove max-width constraint */
+.fi-main,
+.fi-page,
+.fi-content,
+.fi-topbar,
+.fi-body,
+[class*='fi-'][class*='container'],
+[class*='fi-'][class*='wrapper'],
+.fi-section-content-ctn,
+.fi-section-content,
+.fi-fo-field-wrp-container {
+    max-width: none !important;
+}
+
+/* Override Tailwind max-width utilities for Filament panels */
+[class*='fi-'].max-w-7xl,
+[class*='fi-'].max-w-6xl,
+[class*='fi-'].max-w-5xl,
+[class*='fi-'].max-w-4xl {
+    max-width: none !important;
+}
